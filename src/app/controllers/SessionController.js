@@ -1,16 +1,23 @@
+const { User } = require('../models');
+
 class SessionController {
   async store(req, res) {
+    const { email, password } = req.body;
 
-    /*const { User } = require('../models');
-    //import User from './app/models/User';
+    const user = await User.findOne({ where: { email } });
 
-    const response = await User.create({
-      name: 'Augusto',
-      email: 'alcsaw2@hotmail.com',
-      password_hash: '123456'
-    });*/
+    if (!user) {
+      return res.status(401).json({ message: 'User not found' });
+    }
 
-    return res.status(200).send();
+    if (!(await user.checkPassword(password))) {
+      return res.status(401).json({ message: 'Incorrect password.' });
+    }
+
+    return res.json({
+      user,
+      token: user.generateToken()
+    });
   }
 };
 
