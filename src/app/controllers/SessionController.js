@@ -10,6 +10,8 @@ class SessionController {
      */
     const { email, password } = req.body;
 
+    console.log('Receiving data:', req.body);
+
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
